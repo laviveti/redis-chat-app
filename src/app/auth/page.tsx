@@ -24,7 +24,7 @@ const page = () => {
           </p>
 
           <p className='text-2xl md:text-3xl mb-32 text-balance z-10'>
-            You <span className='bg-green-500 px-2 font-bold text-white'>NEED TO</span> build
+            You <span className='bg-green-500/90 px-2 font-bold text-white'>NEED TO</span> build
           </p>
           <AuthButtons />
         </div>
