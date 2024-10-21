@@ -76,3 +76,21 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  ::-webkit-scrollbar {
+    width: 8px; /* Aumentar a largura total da scrollbar */
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted));
+    border-radius: 6px;
+    border: 2px solid transparent; /* Cria um espaçamento "falso" */
+    background-clip: padding-box; /* Faz com que a cor de fundo do thumb não sobreponha a borda */
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: hsl(var(--background));
+  }
+}
