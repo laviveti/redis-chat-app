@@ -48,7 +48,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({ defaultLayout = [320, 48
           document.cookie = `react-resizable-panels:collapsed=false;`;
         }}
         className={cn(isCollapsed && "min-w-[80px] transition-all duration-300 ease-in-out")}>
-        <Sidebar />
+        <Sidebar isCollapsed={isCollapsed} />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
