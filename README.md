@@ -1,3 +1,9 @@
+# This project is based on the tutorial: **[Build an Extremely Fast Chat App with Redis and React | Full Guide 2024](https://www.youtube.com/watch?v=0Kzd4k1YuCA)**
+
+## In this video, you will learn how to create a real-time chat application using Redis and React with modern practices in 2024
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
