@@ -1,4 +1,4 @@
-import { User, USERS } from "@/db/dummy";
+import { User } from "@/db/dummy";
 import React from "react";
 import { ScrollArea } from "./ui/scroll-area";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -9,6 +9,7 @@ import { LogOut } from "lucide-react";
 import useSound from "use-sound";
 import { usePreferences } from "../../store/use-preferences";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { useSelectedUser } from "../../store/use-selected-user";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -16,9 +17,9 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, users }) => {
-  const selectedUser = USERS[0];
   const [playClickSound] = useSound("/sounds/mouse-click.mp3");
   const { soundEnabled } = usePreferences();
+  const { selectedUser, setSelectedUser } = useSelectedUser();
 
   return (
     <div className='group relative flex flex-col h-full gap-4 p-2 data-[collapsed=true]:p-2 max-h-full overflow-auto bg-background'>
@@ -36,7 +37,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, users }) => {
             <TooltipProvider key={index}>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
-                  <div className='flex w-fit mx-auto' onClick={() => soundEnabled && playClickSound()}>
+                  <div
+                    className='flex w-fit mx-auto'
+                    onClick={() => {
+                      soundEnabled && playClickSound();
+                      setSelectedUser(user);
+                    }}>
                     <Avatar className='my-1 flex justify-center items-center'>
                       <AvatarImage
                         src={user.image || "/user-placeholder.png"}
@@ -61,7 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, users }) => {
               onClick={() => soundEnabled && playClickSound()}
               className={cn(
                 "w-full justify-start gap-4 my-1",
-                selectedUser.email === user.email &&
+                selectedUser?.email === user.email &&
                   "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white shrink"
               )}>
               <Avatar className='flex justify-center items-center'>

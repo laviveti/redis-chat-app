@@ -16,8 +16,8 @@ async function getUsers(): Promise<User[]> {
     userKeys.push(...keys);
   } while (cursor !== "0");
 
-  const { getUser } = getKindeServerSession();
-  const currentUser = await getUser();
+  // const { getUser } = getKindeServerSession();
+  // const currentUser = await getUser();
 
   const pipeline = redis.pipeline();
   userKeys.forEach((key) => pipeline.hgetall(key));
@@ -25,9 +25,9 @@ async function getUsers(): Promise<User[]> {
 
   const users: User[] = [];
   for (const user of results) {
-    if (user.id !== currentUser?.id) {
-      users.push(user);
-    }
+    // if (user.id !== currentUser?.id) {
+    users.push(user);
+    // }
   }
   return users;
 }

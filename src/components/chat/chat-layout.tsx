@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/sidebar";
 import { MessageContainer } from "./message-container";
 import { User } from "@/db/dummy";
+import { useSelectedUser } from "../../../store/use-selected-user";
 
 interface ChatLayoutProps {
   defaultLayout: number[] | undefined;
@@ -14,6 +15,7 @@ interface ChatLayoutProps {
 export const ChatLayout: React.FC<ChatLayoutProps> = ({ defaultLayout = [320, 480], users }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(false);
+  const { selectedUser } = useSelectedUser();
 
   React.useEffect(() => {
     const checkScreenWidth = () => {
@@ -55,13 +57,15 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({ defaultLayout = [320, 48
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-        {/* <div className='flex justify-center items-center h-full w-full px-10'>
-          <div className='flex flex-col justify-center items-center gap-4'>
-            <img src='/logo.png' alt='Logo' className='w-full md:w-2/3 lg:w-1/2' />
-            <p className='text-muted-foreground text-center'>Click on a chat to view the messages</p>
+        {!selectedUser && (
+          <div className='flex justify-center items-center h-full w-full px-10'>
+            <div className='flex flex-col justify-center items-center gap-4'>
+              <img src='/logo.png' alt='Logo' className='w-full md:w-2/3 lg:w-1/2' />
+              <p className='text-muted-foreground text-center'>Click on a chat to view the messages</p>
+            </div>
           </div>
-        </div> */}
-        <MessageContainer />
+        )}
+        {selectedUser && <MessageContainer />}
       </ResizablePanel>
     </ResizablePanelGroup>
   );
