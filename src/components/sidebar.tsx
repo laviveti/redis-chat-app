@@ -9,6 +9,7 @@ import { LogOut } from "lucide-react";
 import useSound from "use-sound";
 import { usePreferences } from "../../store/use-preferences";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useSelectedUser } from "../../store/use-selected-user";
 
 interface SidebarProps {
@@ -20,6 +21,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, users }) => {
   const [playClickSound] = useSound("/sounds/mouse-click.mp3");
   const { soundEnabled } = usePreferences();
   const { selectedUser, setSelectedUser } = useSelectedUser();
+
+  const { user } = useKindeBrowserClient();
 
   return (
     <div className='group relative flex flex-col h-full gap-4 p-2 data-[collapsed=true]:p-2 max-h-full overflow-auto bg-background'>
@@ -47,6 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, users }) => {
                       <AvatarImage
                         src={user.image || "/user-placeholder.png"}
                         alt='User image'
+                        referrerPolicy='no-referrer'
                         className='border-2 border-white rounded-full w-10 h-10'
                       />
                       <AvatarFallback>{user.name[0]}</AvatarFallback>
@@ -89,16 +93,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, users }) => {
       <div className='mt-auto'>
         <div className='flex justify-between items-center gap-2 md:px-6 py-2'>
           {!isCollapsed && (
-            <div className='hidden md:flex gap-2 items-center'>
+            <div className='hidden max-w-full md:flex gap-2 items-center'>
               <Avatar className='flex justify-center items-center'>
                 <AvatarImage
-                  src={"/user-placeholder.png"}
+                  src={user?.picture || "/user-placeholder.png"}
                   alt='avatar'
                   referrerPolicy='no-referrer'
                   className='w-8 h-8 border-2 border-white rounded-full'
                 />
               </Avatar>
-              <p className='font-bold'>{"John Doe"}</p>
+              <p className='font-bold truncate max-w-[150px]'>
+                {user?.given_name} {user?.family_name}
+              </p>
             </div>
           )}
           <div className='flex'>
