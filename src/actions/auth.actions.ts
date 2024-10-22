@@ -10,13 +10,13 @@ export async function checkAuthStatus() {
   if (!user) return { success: false };
 
   //namespaces are really important to understand in redis
-  const userId = `user-${user.id}`;
+  const userId = `user:${user.id}`;
 
   const existingUser = await redis.hgetall(userId);
 
   if (!existingUser || Object.keys(existingUser).length === 0) {
     const imgIsNull = user.picture?.includes("gravatar");
-    const image = imgIsNull ? "" : user.picture;
+    const image = imgIsNull ? "" : user.picture || "";
 
     await redis.hset(userId, {
       id: user.id,
