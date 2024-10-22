@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { AuthButtons } from "./AuthButtons";
+import { AuthButtons } from "./auth-buttons";
 
 const page = () => {
   return (
@@ -29,7 +29,7 @@ const page = () => {
           <AuthButtons />
         </div>
       </div>
-      <div className='flex-1 relative overflow-hidden justify-center items-center hidden md:flex'>
+      <div className='flex-1 bg-noise relative overflow-hidden justify-center items-center hidden md:flex'>
         <Image
           src={"/hero-right.png"}
           alt='Hero Image'
