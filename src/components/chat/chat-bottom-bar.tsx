@@ -6,12 +6,15 @@ import { EmojiPicker } from "./emoji-picker";
 import { Button } from "../ui/button";
 import useSound from "use-sound";
 import { usePreferences } from "../../../store/use-preferences";
+import { useMutation } from "@tanstack/react-query";
+import { sendMessageAction } from "@/actions/message.actions";
+import { useSelectedUser } from "../../../store/use-selected-user";
 
 export const ChatBottomBar = () => {
   const [message, setMessage] = React.useState("");
   const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
-  const isPending = false;
   const { soundEnabled } = usePreferences();
+  const { selectedUser } = useSelectedUser();
 
   const [playSound1] = useSound("/sounds/keystroke1.mp3");
   const [playSound2] = useSound("/sounds/keystroke2.mp3");
@@ -23,6 +26,27 @@ export const ChatBottomBar = () => {
   const playRandomKeystrokeSound = () => {
     const randomIndex = Math.floor(Math.random() * playSoundFunctions.length);
     soundEnabled && playSoundFunctions[randomIndex]();
+  };
+
+  const { mutate: sendMessage, isPending } = useMutation({ mutationFn: sendMessageAction });
+
+  const handleSendMessage = () => {
+    if (!message.trim()) return;
+    sendMessage({ content: message, messageType: "text", receiverId: selectedUser?.id || "" });
+    setMessage("");
+    textAreaRef.current?.focus();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+
+    if (e.key === "Enter" && e.shiftKey) {
+      e.preventDefault();
+      setMessage((message) => message + "\n");
+    }
   };
 
   return (
@@ -49,6 +73,7 @@ export const ChatBottomBar = () => {
               setMessage(e.target.value);
               playRandomKeystrokeSound();
             }}
+            onKeyDown={handleKeyDown}
             ref={textAreaRef}
           />
           <div className='absolute right-2 bottom-0.5'>
@@ -64,7 +89,8 @@ export const ChatBottomBar = () => {
           <Button
             className='size-9 dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white shrink-0'
             variant={"ghost"}
-            size={"icon"}>
+            size={"icon"}
+            onClick={handleSendMessage}>
             <SendHorizonal size={20} className='text-muted-foreground' />
           </Button>
         ) : (

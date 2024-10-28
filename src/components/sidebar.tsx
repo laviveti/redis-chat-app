@@ -68,7 +68,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, users }) => {
               key={index}
               variant={"grey"}
               size={"xl"}
-              onClick={() => soundEnabled && playClickSound()}
+              onClick={() => {
+                soundEnabled && playClickSound();
+                setSelectedUser(user);
+              }}
               className={cn(
                 "w-full justify-start gap-4 my-1",
                 selectedUser?.email === user.email &&
