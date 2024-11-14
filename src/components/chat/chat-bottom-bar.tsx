@@ -97,7 +97,10 @@ export const ChatBottomBar = () => {
           <Button
             className='size-9 dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white shrink-0'
             variant={"ghost"}
-            size={"icon"}>
+            size={"icon"}
+            onClick={() => {
+              sendMessage({ content: "👍", messageType: "text", receiverId: selectedUser?.id || "" });
+            }}>
             {!isPending && <ThumbsUp size={20} className='text-muted-foreground' />}
             {isPending && <Loader size={20} className='animate-spin' />}
           </Button>
