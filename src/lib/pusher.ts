@@ -10,15 +10,15 @@ export const pusherServer =
   global.pusherServer ||
   new PusherServer({
     appId: process.env.PUSHER_APP_ID!,
-    key: process.env.PUSHER_KEY!,
-    secret: process.env.PUSHER_SECRET!,
+    key: process.env.PUSHER_APP_KEY!,
+    secret: process.env.PUSHER_APP_SECRET!,
     cluster: "sa1",
     useTLS: true,
   });
 
 export const pusherClient =
   global.pusherClient ||
-  new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+  new PusherClient(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
     cluster: "sa1",
   });
 
@@ -26,13 +26,13 @@ export const pusherClient =
 //TODO: o que pode fazer com que atinja o limite de conexões no nível gratuito
 
 // export const pusherServer = new PusherServer({
-//   appId: process.env.PUSHER_APP_ID!,
-//   key: process.env.PUSHER_KEY!,
-//   secret: process.env.PUSHER_SECRET!,
+//   appId: process.env.PUSHER_APP_APP_ID!,
+//   key: process.env.PUSHER_APP_KEY!,
+//   secret: process.env.PUSHER_APP_SECRET!,
 //   cluster: "sa1",
 //   useTLS: true,
 // });
 
-// export const pusherClient = new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+// export const pusherClient = new PusherClient(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
 //   cluster: "sa1",
 // });
