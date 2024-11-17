@@ -2,6 +2,15 @@ import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ImageIcon, Loader, SendHorizonal, ThumbsUp } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { EmojiPicker } from "./emoji-picker";
 import { Button } from "../ui/button";
 import useSound from "use-sound";
@@ -9,9 +18,12 @@ import { usePreferences } from "../../../store/use-preferences";
 import { useMutation } from "@tanstack/react-query";
 import { sendMessageAction } from "@/actions/message.actions";
 import { useSelectedUser } from "../../../store/use-selected-user";
+import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import Image from "next/image";
 
 export const ChatBottomBar = () => {
   const [message, setMessage] = React.useState("");
+  const [imgUrl, setImgUrl] = React.useState("");
   const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
   const { soundEnabled } = usePreferences();
   const { selectedUser } = useSelectedUser();
@@ -51,7 +63,50 @@ export const ChatBottomBar = () => {
 
   return (
     <div className='p-2 flex justify-between w-full items-center gap-2'>
-      {!message.trim() && <ImageIcon size={20} className='cursor-pointer text-muted-foreground' />}
+      {!message.trim() && (
+        <CldUploadWidget
+          signatureEndpoint={"/api/sign-cloudinary-params"}
+          onSuccess={(result, { widget }) => {
+            setImgUrl((result.info as CloudinaryUploadWidgetInfo).secure_url);
+            widget.close();
+          }}>
+          {({ open }) => {
+            return (
+              <ImageIcon
+                size={20}
+                onClick={() => open()}
+                className='cursor-pointer text-muted-foreground'
+              />
+            );
+          }}
+        </CldUploadWidget>
+      )}
+
+      <Dialog open={!!imgUrl}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Image Preview</DialogTitle>
+          </DialogHeader>
+          <div className='flex justify-center items-center relative h-96 w-full mx-auto'>
+            <Image src={imgUrl} alt='Image Preview' fill className='object-contain' />
+          </div>
+          <DialogFooter>
+            <Button
+              type='submit'
+              onClick={() => {
+                sendMessage({
+                  content: imgUrl,
+                  messageType: "image",
+                  receiverId: selectedUser?.id!,
+                });
+                setImgUrl("");
+              }}>
+              Send
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <AnimatePresence>
         <motion.div
           layout
