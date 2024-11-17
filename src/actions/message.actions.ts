@@ -2,6 +2,8 @@
 
 import { Message } from "@/db/dummy";
 import { redis } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
+
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 type SendMessageActionArgs = {
@@ -18,15 +20,10 @@ export async function sendMessageAction({ content, messageType, receiverId }: Se
 
   const senderId = user.id;
   const conversationId = `conversation:${[senderId, receiverId].sort().join(":")}`;
-
   const conversationExists = await redis.exists(conversationId);
 
   if (!conversationExists) {
-    await redis.hset(conversationId, {
-      participant1: senderId,
-      participant2: receiverId,
-    });
-
+    await redis.hset(conversationId, { participant1: senderId, participant2: receiverId });
     await redis.sadd(`user:${senderId}:conversations`, conversationId);
     await redis.sadd(`user:${receiverId}:conversations`, conversationId);
   }
@@ -34,16 +31,13 @@ export async function sendMessageAction({ content, messageType, receiverId }: Se
   const messageId = `message:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
   const timestamp = Date.now();
 
-  await redis.hset(messageId, {
-    senderId,
-    content,
-    timestamp,
-    messageType,
-  });
+  await redis.hset(messageId, { senderId, content, timestamp, messageType });
+  await redis.zadd(`${conversationId}:messages`, { score: timestamp, member: JSON.stringify(messageId) });
 
-  await redis.zadd(`${conversationId}:messages`, {
-    score: timestamp,
-    member: JSON.stringify(messageId),
+  const channelName = `${senderId}__${receiverId}`.split("__").sort().join("__");
+
+  await pusherServer?.trigger(channelName, "newMessage", {
+    message: { senderId, content, timestamp, messageType },
   });
 
   return { success: true, conversationId, messageId };
